@@ -1,7 +1,7 @@
 # jev-fit catalog — decision families and their Jev shapes
 
 For each family: the shape to recommend, what code should pre-compute, the gate/fallback need,
-and what makes the labels crisp or fuzzy. Numbers cited are from jev-kit's own evals
+and what makes the labels crisp or fuzzy. Numbers cited are from Customs Authority's own evals
 (`examples/linkdrop`) and TypeSafe's docs (2026-09).
 
 ## 1. Intent routing (inbox, tickets, chat, forms)

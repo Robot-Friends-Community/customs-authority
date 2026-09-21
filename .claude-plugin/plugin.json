@@ -1,9 +1,9 @@
 {
-  "name": "jev-kit",
-  "version": "0.1.0",
-  "description": "The decision-layer toolkit for Claude Code: find where TypeSafe's Jev (System One) fits in a project, design question sets that actually work, eval them against a gold set, and wire the gated Jev-plus-LLM hybrid into your app.",
+  "name": "customs-authority",
+  "version": "0.2.0",
+  "description": "Customs Authority · Department of Snap Judgments — the decision-layer toolkit for Claude Code. Find where TypeSafe's Jev (System One) fits in a project, design question sets that actually work, prove them on a gold set, and ship the gated Jev-plus-LLM hybrid: the sure answers are stamped through, the unsure go to Secondary Inspection.",
   "author": { "name": "Robot Friends", "url": "https://github.com/Robot-Friends-Community" },
-  "repository": "https://github.com/Robot-Friends-Community/jev-kit",
+  "repository": "https://github.com/Robot-Friends-Community/customs-authority",
   "license": "MIT",
-  "keywords": ["jev", "typesafe", "system-one", "classification", "routing", "decision-layer", "eval", "llm-cost"]
+  "keywords": ["jev", "typesafe", "system-one", "classification", "routing", "decision-layer", "eval", "llm-cost", "customs-authority"]
 }

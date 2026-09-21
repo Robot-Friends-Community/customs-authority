@@ -73,3 +73,34 @@ class we cared about. Nothing else you do will move the number that much.
 | Pin `jev-1.13.0` once thresholds are tuned | aliases move |
 
 Full rules with examples: `references/criteria-rules.md`. Patterns with code: `references/patterns.md`.
+
+
+## Guided mode (default when the person is new or non-technical)
+
+Mode is set by `/customs` and persists. In guided mode, run the five inputs as a **wizard, one
+AskUserQuestion at a time**, and say *why* before each:
+
+| Step | Ask | Why (say it) |
+|---|---|---|
+| 1 decision | "In one sentence: what's the question, and who acts on the answer?" | "Everything else follows from this; if it takes two sentences it's probably two questions." |
+| 2 answers | "What are the possible answers? What does each one mean *for you*?" | "Jev takes your words literally. 'Urgent' means nothing; 'a customer can't log in' means something." |
+| 3 state | "At the moment this decision is made, what does your system actually have in hand?" | "We can only send what exists. Sending more than needed makes it *worse*, not better." |
+| 4 examples | "Give me 5–10 real ones — especially the ones you'd argue about." | "The arguable ones become sentences in the criteria. Every miss we'd 'explain' later is a missing line now." |
+| 5 stakes | "What happens if it's wrong?" | "That sets how sure Jev must be before your software acts without a person." |
+
+Then **show your work in plain words** before emitting files: the primitive you picked and why
+("this is 'which one of these' → choice"), whether you split the question ("people would argue
+about the label but not about these four smaller questions"), the WHO preamble read aloud, and
+each option's criteria as a short paragraph they can correct. Ask "does this sound like how you'd
+explain it to a new assistant?" — if they change a word, that's the product improving.
+
+Emit the artifacts, then say what happens next in one line: "Now we check it against your
+answer key — `/jev-label` if you don't have one yet, `/jev-eval` if you do."
+
+Gloss terms from `docs/GLOSSARY.md` the first time they appear (state, criteria, gate, confidence).
+
+## Expert mode
+
+Collect the five inputs in one message (they'll usually paste them). Emit the four artifacts and
+the v0/v1/v2 ladder without commentary; link `references/criteria-rules.md` instead of
+explaining. Flag only violations of the quick-rules table.

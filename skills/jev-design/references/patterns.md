@@ -1,6 +1,6 @@
 # patterns — architectural shapes for building with Jev (with code)
 
-Condensed from TypeSafe's patterns docs + jev-kit evals. Code is Python against the raw
+Condensed from TypeSafe's patterns docs + Customs Authority evals. Code is Python against the raw
 response shape (`answers[id]`); the same applies to `jev_client.Result.answers`.
 
 ## A. Speculative fan-out — ask everything you *might* need, in one call

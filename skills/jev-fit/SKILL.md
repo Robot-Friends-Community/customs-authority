@@ -103,3 +103,32 @@ Creative direction, critique, naming; judging the *quality* of LLM output or cod
 claim verification; anything numeric/date/counting; multi-hop conditions; text generation;
 adversarial public input without criteria + edge-case tests; non-English without a test. See
 `jev-playbook` for the full list and the model's documented failure modes.
+
+
+## Guided mode (default when the person is new or non-technical)
+
+Mode is set by `/customs` (guided / expert) and persists for the session. In guided mode:
+
+1. **Say what you're about to do and why**, before reading anything: "I'm going to list every
+   place in this project where something makes a decision about text — a category, a priority, a
+   yes/no. Then I'll sort each one into three piles: things a rule can do, things Jev can do, and
+   things that need a big model. You'll get a ranked list and one recommendation to start with."
+2. **Ask for the target with one AskUserQuestion** if it isn't obvious: a codebase here · a
+   workflow (n8n / Zapier JSON) · a process you'd describe in words · a prompt or skill.
+   For "describe it in words": ask them to narrate one item's journey through the system ("an
+   email arrives, then what happens?") — every "then someone checks / decides / sorts" is a step.
+3. **Show the three piles in plain words** before the table: *rule* ("if the subject contains
+   'invoice'"), *judgment* ("is this a complaint or a question?"), *thinking* ("write the reply").
+4. **For each JEV candidate say the win in their units** — "you make this call ~200 times a day;
+   Jev does it in a tenth of a second for a fraction of a cent, and tells you when it isn't sure so
+   a person can look" — and the risk in their units ("customers could word things to game it").
+5. **Recommend one pilot and say why in one sentence** (crisp labels, volume, internal-facing).
+   Then offer the next step with AskUserQuestion: build the answer key (`/jev-label`) · write the
+   questions (`/jev-design`) · show me on the example first (`/customs tutorial`).
+6. Add a **plain-English column** to the opportunities table in guided mode: `What it means` —
+   one sentence a non-engineer can act on.
+
+## Expert mode
+
+Skip the narration; deliver the report in the output contract and stop. Assume `algo-lens`
+vocabulary. Name the pilot and the gold-set source in one line each.

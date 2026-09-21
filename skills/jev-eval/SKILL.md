@@ -81,3 +81,38 @@ Each run also writes every row (state, answers, probabilities, confidence, laten
 
 - the criteria change (obviously) · the model alias moves (`response.model` changed) · production
   confidence distribution drifts (log it) · you add ≥50 new gold rows.
+
+
+## Guided mode (default when the person is new or non-technical)
+
+Mode is set by `/customs` and persists. The scoreboard is a wall of numbers; in guided mode
+you translate it.
+
+1. **Before running:** "This sends your ~100 examples to Jev a few different ways and compares
+   its answers to yours. It costs about a cent and takes under a minute."
+2. **Read back the result as three sentences, not a table:**
+   - *overall* — "Asked the plain way, Jev agreed with you 70% of the time. With your criteria,
+     90%."
+   - *ceiling* — "Claude, given the same criteria, got 96%. That's about the best anyone does on
+     these labels." (If agreement/κ was measured in `/jev-label`, cite that instead — it's the
+     truer ceiling.)
+   - *the gate* — "If we only let Jev act when it's at least 85% sure, it handles 64% of items by
+     itself and gets 99% of those right. The other 36% go to a person or Claude. Together that's
+     95% — as good as Claude alone, with two-thirds fewer expensive calls."
+3. **Pick the gate together with AskUserQuestion** — present 2–3 rows from the coverage→accuracy
+   line as options in their terms: *"Jev handles 73% on its own, 96% right"* · *"64% on its own,
+   99% right"* · *"44% on its own, 98% right"*. Ask which trade they want given the stakes they
+   named in `/jev-design` step 5. Record the choice in `DESIGN.md`.
+4. **Read the misses with them** (top 5): for each, ask "would you have said that too?" —
+   *yes* → fix the gold label; *no, obviously X* → a criteria line is missing (send to
+   `/jev-design`); *genuinely could go either way* → mark unclear / route to fallback.
+5. **Say what ships:** "So the thing we build is: Jev decides when it's ≥0.85 sure; otherwise
+   it goes to <fallback>. That's `/jev-integrate`."
+
+Never present a single accuracy number without its gate line; never present the gate line
+without the fallback.
+
+## Expert mode
+
+Run, print the table, list misses with ids, state the recommended gate and the hybrid number,
+write `DESIGN.md`. One paragraph max.

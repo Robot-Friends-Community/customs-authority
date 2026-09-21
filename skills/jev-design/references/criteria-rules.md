@@ -1,7 +1,7 @@
 # criteria-rules — how to write questions Jev answers well
 
 Sources: TypeSafe docs (primitives, state, confidence, jaggedness for jev-1.13, 2026-09) and
-jev-kit's own evals (`examples/linkdrop/SCOREBOARD.md`).
+Customs Authority's own evals (`examples/linkdrop/SCOREBOARD.md`).
 
 ## 1. Primitives
 

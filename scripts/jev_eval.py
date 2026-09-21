@@ -1,5 +1,5 @@
 """
-jev_eval — the jev-kit eval harness for TypeSafe/Jev question-set design.
+jev_eval — the Customs Authority eval harness for TypeSafe/Jev question-set design.
 
 Rule of the kit: no question set ships without a scoreboard. 100 labeled rows and a cent is enough.
 

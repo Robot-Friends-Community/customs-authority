@@ -57,7 +57,7 @@ indirection & double negatives · large irrelevant state · adversarial content 
 instructions vs criteria · structural invariants not guaranteed (P(a)+P(¬a)≠1; noul ≠ yes/no
 choice) · generation. Each has a "do this instead" in `jev-design/references/criteria-rules.md`.
 
-## What we measured (jev-kit evals)
+## What we measured (Customs Authority evals)
 
 - **Speed and cost claims hold.** ~120 ms, ≈$0.003 for a 108-row run, on every variant.
 - **Criteria text is the lever.** Same binary task: bare 70% → one-line criteria 88% → rich 90%.

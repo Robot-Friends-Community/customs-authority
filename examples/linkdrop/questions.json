@@ -1,0 +1,10 @@
+{
+  "bucket": {
+    "type": "choice",
+    "instructions": "The link was saved by the founder of a small AI-native software + creative studio (Claude Code, AI agents, web builds, brand/design, marketing, growth, a toy business with China sourcing). WORK = anything he would explore, build with, or use for the studio or its clients. PERSONAL = saved for his own life: cooking, music, history, politics, philosophy, home/DIY, fitness, gaming, entertainment, shopping. Based on `title` (and `url` if the title is uninformative), was this link saved for WORK or for PERSONAL life?",
+    "criteria": {
+      "work": "Claude Code, AI agents, coding tools, skills/plugins, prompts, evals, dev workflows; website/app building, hosting, no-code tools; business, marketing, growth, branding, ads strategy, commerce, pricing; sourcing/manufacturing/China suppliers; creative-AI, motion, design references; talks by AI/business figures. A recipe VIDEO ABOUT running a food business is still work; a recipe to cook is personal.",
+      "personal": "Recipes and cooking; griddles and kitchen gear; music samples, DJ, jazz lessons; history, politics, culture, documentaries; philosophy and mindset; home DIY, gadgets, restoration; health, fitness, personal money; gaming; comedy, memes, viral clips; products to buy for himself. A short about 'AI' that is a joke or a meme is personal."
+    }
+  }
+}

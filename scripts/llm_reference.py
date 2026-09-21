@@ -64,8 +64,8 @@ def main() -> None:
     for r in [r for r in sc if preds[r["id"]] != r["labels"][task.LABEL]][:8]:
         print(f"   miss {r['id']}: truth={r['labels'][task.LABEL]} pred={preds[r['id']]} | {r['state'].get('title','')[:70]}")
     runs = Path.cwd() / "runs"; runs.mkdir(exist_ok=True)
-    (runs / f"llm-{args.model}-{Path(args.task).stem}-{args.variant}.json").write_text(json.dumps(preds, indent=1), encoding="utf-8")
-    with (HERE / "runs" / "SCOREBOARD.md").open("a", encoding="utf-8") as f:
+    (runs / f"llm-{args.model}-{Path(args.task).stem}-{args.variant}.json").write_text(json.dumps(preds, indent=1), encoding="utf-8", newline="\n")
+    with (HERE / "runs" / "SCOREBOARD.md").open("a", encoding="utf-8", newline="\n") as f:
         f.write(f"\n{line}  ← LLM reference, task `{args.task}`\n")
 
 

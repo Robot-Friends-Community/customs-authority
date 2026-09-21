@@ -2,7 +2,7 @@
 jev_status — the Customs Authority doctor. Answers "where am I?" for a person or an AI in one screen.
 
 Checks, in order:
-  1. TYPESAFE_API_KEY present (never printed)      4. question sets found under jev/**/questions.json
+  1. TYPESAFE_API_KEY present (never printed)      4. question sets found under jev/**/questions.json (+ unlabeled candidates.jsonl)
   2. httpx importable                              5. per set: gold size, DESIGN.md gate + model pin, last scoreboard + age
   3. API reachable, models listed, pin vs live     6. model drift: pinned model vs what the API answers with
 
@@ -188,7 +188,12 @@ def check_project(root: Path, live_model: str | None) -> tuple[list[dict], list[
         # verdicts for this set
         if not entry["task_py"]:
             lines.append(line(WARN, f"{name}: no task.py (the harness needs VARIANTS + derive())", "`/jev-design` emits it from templates/task_template.py"))
-        if entry["gold_rows"] == 0:
+        cand = d / "candidates.jsonl"
+        entry["candidate_rows"] = count_lines(cand) if cand.exists() else 0
+        if entry["gold_rows"] == 0 and entry["candidate_rows"]:
+            lines.append(line(FAIL, f"{name}: {entry['candidate_rows']} unlabeled candidates, no gold.jsonl yet — nothing to measure against",
+                              f"`/jev-label` → python \"${{CLAUDE_PLUGIN_ROOT}}/scripts/jev_label.py\" label --in {name}/candidates.jsonl --gold {name}/gold.jsonl --questions {name}/questions.json --labeler <you>"))
+        elif entry["gold_rows"] == 0:
             lines.append(line(FAIL, f"{name}: no gold.jsonl — nothing to measure against", "`/jev-label` to build the answer key (≥100 rows; include the arguable ones)"))
         elif entry["gold_rows"] < 100:
             lines.append(line(WARN, f"{name}: gold set has {entry['gold_rows']} rows (aim for ≥100)", "`/jev-label` to grow it"))

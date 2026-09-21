@@ -20,6 +20,16 @@ class we cared about. Nothing else you do will move the number that much.
    cases in the criteria and the seed of the gold set.
 5. **The consequence of a wrong answer** — sets the gate and whether an escape option is needed.
 
+## Entering from `/jev-fit` (don't re-ask what the audit already established)
+
+If a jev-fit report exists for this target, **derive the five inputs from it and the code**
+before asking anything: the decision + who acts on it (from the opportunity row), the answer
+space (from the enumerated labels in the prompt / enum column / branch names), the state (the
+fields actually available at that call site — read the code), the stakes (from the Risks column),
+and 5–10 real examples (from fixtures, logs, seed data, or the DB). Then present **one**
+AskUserQuestion: "Here's what I derived — confirm, or tell me what's wrong" with the five items
+listed. Only fall back to the five-step wizard for items you genuinely couldn't derive.
+
 ## Procedure
 
 1. **Pick the primitive** (`references/criteria-rules.md` §1):
@@ -51,11 +61,38 @@ class we cared about. Nothing else you do will move the number that much.
 <project>/jev/<decision-name>/
   questions.json        # the v-current question set (what production sends)
   task.py               # VARIANTS (v0 naive, v1 rich, v2 decomposed…) + STATE() + derive()  — from templates/task_template.py
-  gold.jsonl            # stub: 5–10 seed rows from the examples, labels filled; grow to ≥100
+  gold.jsonl            # ONLY if human decisions already exist (export them); else omit — see below
+  candidates.jsonl      # the common case: ≥100 REAL rows, UNLABELED ({"id", "state"}), pulled from
+                        #   logs / DB / fixtures / exports — the input to /jev-label
   DESIGN.md             # the decision, answer space, WHO, state fields, gate consequence, open questions
 ```
 
 `${CLAUDE_PLUGIN_ROOT}/templates/task_template.py` is the starting point for `task.py`.
+
+**Labels come from humans, never from you or the model.** In a fresh project there usually *are*
+no labels yet — that's normal. Emit `candidates.jsonl` (real rows, production-shaped state, no
+labels) and say: "next is `/jev-label` — you (or someone who makes this call today) label ~100 of
+these blind; then `/jev-eval`." Put the 5–10 examples the person gave you in `DESIGN.md` as the
+seed boundary cases; don't pretend they're a gold set. If human decisions *do* exist (a triaged
+column, last month's routed items), export them with `jev_label.py import` into `gold.jsonl`.
+
+**Write JSON/JSONL with LF newlines** (`open(..., newline="
+")` / `write_text(..., newline="
+")`)
+so Windows doesn't turn every artifact into a CRLF diff.
+
+**Smoke test before handing off** (12 rows, ~100 ms each, under a cent):
+
+```python
+import sys; sys.path.insert(0, "<CLAUDE_PLUGIN_ROOT>/scripts")   # or copy jev_client.py next to task.py
+from jev_client import Jev                                       # the class is `Jev` (not JevClient)
+import json; Q = json.load(open("jev/<decision>/questions.json", encoding="utf-8"))
+r = Jev().ask(state, Q); r.answers, r.model, r.latency_s, r.cost_usd
+```
+
+or `python "${CLAUDE_PLUGIN_ROOT}/scripts/jev_client.py" ask --state-file row.json --questions jev/<decision>/questions.json`.
+Look for: confidence *low on the rows a human would argue about* and high on the clear ones. If
+it's confidently wrong on a clear one, a criteria line is missing — fix it now, before labeling.
 
 ## Quick rules (the ones that moved numbers)
 

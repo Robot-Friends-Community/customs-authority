@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 — 2026-09-21 — first-run friction
+From the first real run (non-engineer, guided mode, a 237KB monorepo → a draft PR in one session):
+- `/jev-design`: **entering from `/jev-fit`** derives the five inputs from the report + code and asks one
+  confirm/correct question instead of re-running the wizard.
+- `/jev-design`: artifact contract now says the truth about labels — fresh projects emit an unlabeled
+  `candidates.jsonl` → `/jev-label`; `gold.jsonl` only when human decisions already exist. Documented
+  smoke test with the real client class (`from jev_client import Jev`).
+- `jev_status.py`: reports unlabeled `candidates.jsonl` counts and prints the exact `/jev-label` command.
+- `patterns.md` §K: dates / deadlines / "how soon?" — split the calendar into code, keep `not_stated`.
+- `/jev-fit`: monorepo hint (grep the whole workspace first; the second app is where steps hide).
+- `/customs`: free-text answers to menus are normal — map to the nearest option and continue.
+- All scripts write JSON/JSONL/MD with LF newlines; `.gitattributes` added (no more CRLF diffs on Windows).
+
 ## 0.2.0 — 2026-09-21 — "Customs Authority"
 - **Renamed** jev-kit → **Customs Authority · Department of Snap Judgments** (`customs-authority`).
   Same universe as Airport Authority and DoPA. Old GitHub URL redirects.

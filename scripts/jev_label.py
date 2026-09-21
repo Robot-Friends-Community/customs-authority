@@ -56,7 +56,7 @@ def read_rows(path: Path, id_col: str = "id", state_cols: list[str] | None = Non
 
 def append_row(path: Path, row: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as f:
+    with path.open("a", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
@@ -181,7 +181,7 @@ def cmd_agree(a: argparse.Namespace) -> None:
             print(f"  {i}: A={x}  B={y}  | {st}")
     if a.out:
         Path(a.out).write_text("\n".join(json.dumps({"id": i, "a": x, "b": y, "state": ra[i]["state"]}, ensure_ascii=False)
-                                         for i, x, y in dis), encoding="utf-8")
+                                         for i, x, y in dis), encoding="utf-8", newline="\n")
         print(f"\ndisagreements written to {a.out}")
 
 

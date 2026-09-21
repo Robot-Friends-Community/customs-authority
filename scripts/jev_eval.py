@@ -70,7 +70,7 @@ async def call(client: httpx.AsyncClient, sem: asyncio.Semaphore, model: str, st
             d["_latency"] = dt
             d["_cached"] = False
             CACHE.mkdir(exist_ok=True)
-            f.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+            f.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8", newline="\n")
             return d
     return {"error": "rate-limited after retries", "_latency": 0}
 
@@ -187,14 +187,14 @@ def main() -> None:
         print(fmt(s))
         lines.append(fmt(s))
         (RUNS / f"{stamp}-{Path(args.task).stem}-{name}.jsonl").write_text(
-            "\n".join(json.dumps(r, ensure_ascii=False) for r in rows), encoding="utf-8")
+            "\n".join(json.dumps(r, ensure_ascii=False) for r in rows), encoding="utf-8", newline="\n")
         if s.get("n"):
             print("   confusion:", {t: c for t, c in s["confusion"].items()})
             for m in s["misses"][: args.show_misses]:
                 st = json.dumps(m["state"], ensure_ascii=False)[:90]
                 print(f"   miss {m['id']}: truth={m['truth']} pred={m['pred']} conf={m['conf'] if m['conf'] is None else round(m['conf'],2)} | {st}")
     board = RUNS / "SCOREBOARD.md"
-    with board.open("a", encoding="utf-8") as f:
+    with board.open("a", encoding="utf-8", newline="\n") as f:
         f.write(f"\n## {stamp} · task `{args.task}` · gold n={len(records)} · {args.model}\n\n" + "\n".join(lines) + "\n")
     print(f"\nappended to {board}")
 

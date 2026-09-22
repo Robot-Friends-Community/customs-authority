@@ -64,6 +64,37 @@ and what makes the labels crisp or fuzzy. Numbers cited are from Customs Authori
 - **Shape:** `noul` per claim against provided evidence in `state` ("Does `evidence` support
   `claim`?"). Works when evidence is *in the state*; not for open-world fact checking.
 
+## 11. Inside the agent harness itself — model-tier routing and the skill receptionist
+- **Model routing:** before an LLM call, `choice tier` over {`haiku`, `sonnet`, `opus`, …} from the
+  task text + a `WHO` describing what each tier is worth paying for. Launch demos reported ~70% cost
+  reduction on mixed workloads. Criteria must be *situations* ("a one-file rename with a clear spec"
+  vs "a design decision across modules"), and the gold set is your own history: which tier *actually*
+  sufficed. Gate: low confidence → the mid tier, never the cheapest.
+- **Skill / tool picking ("the receptionist"):** `choice skill` over the installed skill names from the
+  user's message; reported ~5× faster than an LLM deciding which skill to load. **Two-stage for >255
+  options** (category first, then skill within category). Gold set for free: session logs of which
+  skill fired. Anti-fit: when the right skill depends on *reading files* first — that's the LLM's job.
+- **Win:** shaves seconds and dollars off every agent turn; the confidence tells you when the harness
+  should just ask.
+
+## 12. Moderation / policy / rule checks (communities, comments, submissions)
+- **Shape:** one `noul` per rule ("breaks rule 3: no self-promotion outside #promo"), fan-out, with
+  the rule text *in the criteria*; a `score` for severity; route ≥ gate to auto-hide, else to a mod.
+- **Risk:** adversarial by nature — run the hostile-input pass; keep a human on the low-confidence lane.
+
+## 13. Search by meaning over a library (notes, assets, repos, watched videos)
+- **Shape:** the query + each item's title/description/tags as `state`, `noul` "is this what the
+  person is looking for?" or `score` relevance 0–5; thousands of items per query is fine. Pre-filter
+  with cheap text match, then let Jev rank the survivors. Works on *text about* media (captions,
+  alt text, metadata), not pixels.
+- **Win:** search that understands intent, at a cost that makes "run it on every keystroke" possible.
+
+## 14. Element / DOM classification for real-time filtering
+- **Shape:** per element (tag, text, class names, position, a short outerHTML snippet) → `choice`
+  {`content`, `nav`, `ad`, `cookie-banner`, `upsell`, `dialog`} — a browser extension or a scraper
+  cleaning pages as they render. Same idea for form fields, table rows, chat messages.
+- **Constraint:** untrusted input; cap snippet length; never act on `unclear`.
+
 ## Anti-catalog (recommend against)
 | Looks like a fit | Why it isn't | Instead |
 |---|---|---|

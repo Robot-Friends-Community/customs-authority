@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.3 — 2026-09-21 — agent-harness patterns
+From the launch-week coverage (RoboNuggets "Jev will 10x your Claude Code"):
+- fit-catalog §11–14: **inside the agent harness** (model-tier routing, the skill receptionist with the
+  two-stage trick for >255 options), moderation / rule checks, search-by-meaning over a library,
+  element / DOM classification for real-time filtering.
+- patterns §L: Agentic OS — tier-routing question set + `decide()` with "unsure → mid tier, never small",
+  skill receptionist, and how to wire it as a Claude Code `UserPromptSubmit` hook.
+- playbook: access reported via Vercel AI Gateway and Cloudflare Workers AI (verify before pinning).
+
 ## 0.2.2 — 2026-09-21 — back-half friction
 From the shadow-mode deploy on a guarded client monorepo (765 tests, 9 gates):
 - `/jev-integrate` §0b **shadow mode**: the sanctioned first deploy when labels are pending — log

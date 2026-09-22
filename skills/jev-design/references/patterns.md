@@ -75,6 +75,32 @@ Pin `jev-1.13.0` where thresholds were tuned; log `response.model`, `usage.input
 confidence and the routed source (`jev` / `fallback`) per call. When an alias moves, re-run
 `jev-eval` on the gold set before adopting.
 
+## L. Agentic OS — Jev inside the harness (model routing + skill receptionist)
+
+The two uses the Claude Code community jumped on first. Both are ordinary decisions and get the
+ordinary treatment: criteria as situations, a gold set, a scoreboard, a gate.
+
+```python
+TIERS = {"tier": {"type": "choice",
+    "instructions": f"{WHO} From `task`, which model tier is the cheapest that will do this well?",
+    "criteria": {
+        "small":  "Mechanical edits with a clear spec: rename, format, one-file fix, write a test for given code, answer from a doc already in context.",
+        "medium": "Multi-file changes with a known pattern; summaries of long text; ordinary feature work with tests.",
+        "large":  "Design decisions across modules; ambiguous specs; debugging with no repro; anything where a wrong answer costs hours.",
+    }}}
+tier, conf, source = jev.decide(state={"task": user_msg, "files_mentioned": n}, questions=TIERS,
+                                key="tier", gate=0.8, fallback=lambda s: "medium")   # unsure → mid tier, never small
+```
+
+**Skill receptionist** — `choice skill` over installed skill names + `none`. With >255 skills, ask
+`choice category` first, then `choice skill` within it (two calls, still ~200 ms). Gold set: your own
+session history — which skill actually fired for which message. Anti-fit: if picking the skill
+requires *reading the repo first*, leave it to the LLM; Jev only sees the message.
+
+**How to wire it in Claude Code:** a `UserPromptSubmit` hook that calls Jev and injects one line
+("suggested skill: /x · tier: medium · confidence 0.91") for the model to honour or ignore.
+Log `source` and the model's actual choice — that's the next gold set.
+
 ## K. Dates, deadlines, and "how soon?" — split the calendar out of the judgment
 
 Jev is not a calendar. "Is this due within 7 days?" mixes a *judgment* (does the text state a

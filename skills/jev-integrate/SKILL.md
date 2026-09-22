@@ -17,6 +17,25 @@ from the scoreboard, a fallback, and logging** — in that order of importance.
   server. **Never** in client-side code, `NEXT_PUBLIC_*`, or a repo.
 - Model pinned: `TYPESAFE_MODEL=jev-1.13.0` (or the version the gate was tuned on).
 
+## 0b. No scoreboard yet? Ship **shadow mode**, not the gate
+
+When labels are pending (the common case on a client project — labels must come from *their*
+people), the right first deploy is a **shadow**: call Jev on the real inputs, **log** the answer,
+confidence, and what the gate *would* have done (`would_stamp: true/false`), and **change nothing
+the user sees**. Rules:
+
+- The gate is marked **PROVISIONAL** in `DESIGN.md` and in the log line; the code refuses to
+  `suggest`/act until a scoreboard exists (a mode enum: `off` → `shadow` → `suggest` → `auto`).
+- `unconfigured` (no key) ⇒ **silent no-op**, never an error in the user path.
+- Unknown / unexpected mode ⇒ **fail closed** (behave as `off`).
+- Run the call off the request path (`after()` in Next.js, a queue, a background task) so the
+  shadow costs users zero latency.
+- The shadow log *is* data: once labels arrive, join `would_stamp` + label to see real-world
+  coverage→accuracy for free, alongside `/jev-eval`.
+
+Then the rest of this skill applies unchanged when the scoreboard lands: flip `shadow` → `suggest`
+with the chosen gate, never straight to `auto`.
+
 ## 1. Drop in the client
 
 | Stack | File | Notes |
@@ -61,6 +80,8 @@ confidence histogram. Drift shows up here before it shows up in complaints.
 - [ ] key in secrets manager + server env only; model pinned; retries on 429/529
 - [ ] fallback implemented and exercised; `unclear` (if any) routes to it
 - [ ] logging of model/usage/confidence/source; alert on `model` change
+- [ ] `unconfigured` (no key) ⇒ silent no-op on the user path; unknown mode ⇒ fail closed (as `off`)
+- [ ] mode ladder respected: `off` → `shadow` → `suggest` → `auto`; shadow/provisional gates never act
 - [ ] public route: state cap, rate limit, spend cap on host
 - [ ] a cron or hook re-runs `/jev-eval` when `model` changes or gold grows
 

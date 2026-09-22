@@ -115,6 +115,23 @@ def count_lines(p: Path) -> int:
         return 0
 
 
+def state_shape(p: Path) -> str:
+    """One line on the rows in a jsonl: 'state fields: title, url · median 64 chars' — catches shape drift early."""
+    try:
+        rows = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
+    except (OSError, json.JSONDecodeError):
+        return ""
+    if not rows:
+        return ""
+    states = [r.get("state") for r in rows]
+    if all(isinstance(st, dict) for st in states):
+        fields = sorted({k for st in states for k in st})
+        lens = sorted(len(json.dumps(st, ensure_ascii=False)) for st in states)
+        return f"state fields: {', '.join(fields[:8])}{'…' if len(fields) > 8 else ''} · median {lens[len(lens)//2]} chars"
+    lens = sorted(len(str(st)) for st in states)
+    return f"state: plain text · median {lens[len(lens)//2]} chars"
+
+
 def parse_design(p: Path) -> dict:
     """Best-effort read of DESIGN.md for the recorded gate / model / variant. Loose regexes on purpose."""
     d = {"gate": None, "model": None, "variant": None}
@@ -190,15 +207,16 @@ def check_project(root: Path, live_model: str | None) -> tuple[list[dict], list[
             lines.append(line(WARN, f"{name}: no task.py (the harness needs VARIANTS + derive())", "`/jev-design` emits it from templates/task_template.py"))
         cand = d / "candidates.jsonl"
         entry["candidate_rows"] = count_lines(cand) if cand.exists() else 0
+        entry["shape"] = state_shape(gold if entry["gold_rows"] else cand) if (entry["gold_rows"] or entry["candidate_rows"]) else ""
         if entry["gold_rows"] == 0 and entry["candidate_rows"]:
-            lines.append(line(FAIL, f"{name}: {entry['candidate_rows']} unlabeled candidates, no gold.jsonl yet — nothing to measure against",
+            lines.append(line(FAIL, f"{name}: {entry['candidate_rows']} unlabeled candidates, no gold.jsonl yet — nothing to measure against ({entry['shape']})",
                               f"`/jev-label` → python \"${{CLAUDE_PLUGIN_ROOT}}/scripts/jev_label.py\" label --in {name}/candidates.jsonl --gold {name}/gold.jsonl --questions {name}/questions.json --labeler <you>"))
         elif entry["gold_rows"] == 0:
             lines.append(line(FAIL, f"{name}: no gold.jsonl — nothing to measure against", "`/jev-label` to build the answer key (≥100 rows; include the arguable ones)"))
         elif entry["gold_rows"] < 100:
-            lines.append(line(WARN, f"{name}: gold set has {entry['gold_rows']} rows (aim for ≥100)", "`/jev-label` to grow it"))
+            lines.append(line(WARN, f"{name}: gold set has {entry['gold_rows']} rows (aim for ≥100) · {entry['shape']}", "`/jev-label` to grow it"))
         else:
-            lines.append(line(OK, f"{name}: gold set {entry['gold_rows']} rows"))
+            lines.append(line(OK, f"{name}: gold set {entry['gold_rows']} rows · {entry['shape']}"))
         if sb is None:
             lines.append(line(FAIL, f"{name}: never evaluated (no runs/SCOREBOARD.md) — the one step that decides whether it works",
                               f"`/jev-eval` → python \"${{CLAUDE_PLUGIN_ROOT}}/scripts/jev_eval.py\" --task {name}/task.py --gold {name}/gold.jsonl"))

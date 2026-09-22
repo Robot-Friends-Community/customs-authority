@@ -17,22 +17,27 @@ export type SystemOneResponse<Q extends Record<string, Question>> = {
   usage: { input_tokens: number; output_tokens: number };
 };
 
-const BASE = process.env.TYPESAFE_BASE_URL ?? "https://api.typesafe.ai";
-const MODEL = process.env.TYPESAFE_MODEL ?? "jev-1.13.0"; // pin; move on your own schedule
+// Env is read per call (not at module load) so tests can vary TYPESAFE_* between cases and a
+// missing key is detected where it is used. Pin the model; move it on your own schedule.
+const env = () => ({
+  base: process.env.TYPESAFE_BASE_URL ?? "https://api.typesafe.ai",
+  model: process.env.TYPESAFE_MODEL ?? "jev-1.13.0",
+  key: process.env.TYPESAFE_API_KEY,
+});
 
 export async function ask<Q extends Record<string, Question>>(
   state: unknown,
   questions: Q,
   opts: { model?: string; retries?: number; signal?: AbortSignal } = {},
 ): Promise<SystemOneResponse<Q>> {
-  const key = process.env.TYPESAFE_API_KEY;
+  const { base, model, key } = env();
   if (!key) throw new Error("TYPESAFE_API_KEY is not set");
   const retries = opts.retries ?? 3;
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch(`${BASE}/v1/systemone`, {
+    const res = await fetch(`${base}/v1/systemone`, {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: opts.model ?? MODEL, state, questions }),
+      body: JSON.stringify({ model: opts.model ?? model, state, questions }),
       signal: opts.signal,
     });
     if ((res.status === 429 || res.status === 529) && attempt < retries) {

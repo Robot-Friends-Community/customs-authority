@@ -98,8 +98,10 @@ def _log(record: dict) -> None:
     if MANIFEST.exists():
         try:
             existing = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, OSError):
             existing = []
+        if not isinstance(existing, list):  # tolerate a hand-edited / foreign manifest
+            existing = [existing]
     existing.append(record)
     MANIFEST.write_text(json.dumps(existing, indent=2), encoding="utf-8")
 

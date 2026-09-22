@@ -74,7 +74,7 @@ def generate(name: str) -> str:
             dl = requests.get(item["url"], timeout=60)
         except requests.RequestException as e:
             return fail(f"download error: {e}")
-        if dl.status_code != 200 or not dl.content.startswith(b"PNG"):
+        if dl.status_code != 200 or dl.content[:8] != bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]):  # PNG signature
             return fail(f"download returned HTTP {dl.status_code}, not a PNG")
         png = dl.content
     else:

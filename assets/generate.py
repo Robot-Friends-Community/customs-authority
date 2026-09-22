@@ -42,30 +42,47 @@ def generate(name: str) -> str:
         sys.exit("missing reference images (see docstring): " + ", ".join(missing))
 
     t0 = time.time()
+    record = {"timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"), "image": name, "model": MODEL, "size": spec["size"],
+              "ok": False, "prompt": prompt}
+
+    def fail(msg: str) -> str:
+        record.update(error=msg[:500], elapsed_s=round(time.time() - t0, 1))
+        _log(record)
+        return f"== {name}: FAIL {msg[:300]}"
+
     handles = [r.open("rb") for r in REFS]
     try:
         files = [("image[]", (r.name, fh, "image/png")) for r, fh in zip(REFS, handles)]
         data = {"model": MODEL, "prompt": prompt, "size": spec["size"], "quality": spec.get("quality", "high"), "n": "1"}
         resp = requests.post(API, headers={"Authorization": f"Bearer {key}"}, data=data, files=files, timeout=400)
+    except requests.RequestException as e:  # timeout, DNS, TLS, dropped connection — still gets a manifest record
+        return fail(f"request error: {e}")
     finally:
         for fh in handles:
             fh.close()
-    elapsed = round(time.time() - t0, 1)
-
-    record = {"timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"), "image": name, "model": MODEL, "size": spec["size"],
-              "elapsed_s": elapsed, "ok": resp.status_code == 200, "prompt": prompt}
     if resp.status_code != 200:
-        record["error"] = resp.text[:500]
-        _log(record)
-        return f"== {name}: FAIL HTTP {resp.status_code}: {resp.text[:300]}"
-    item = resp.json()["data"][0]
+        return fail(f"HTTP {resp.status_code}: {resp.text}")
+    try:
+        item = resp.json()["data"][0]
+    except (ValueError, KeyError, IndexError) as e:
+        return fail(f"unexpected response shape: {e}")
     if "b64_json" in item:
         import base64
-        out.write_bytes(base64.b64decode(item["b64_json"]))
+        png = base64.b64decode(item["b64_json"])
+    elif "url" in item:
+        try:
+            dl = requests.get(item["url"], timeout=60)
+        except requests.RequestException as e:
+            return fail(f"download error: {e}")
+        if dl.status_code != 200 or not dl.content.startswith(b"PNG"):
+            return fail(f"download returned HTTP {dl.status_code}, not a PNG")
+        png = dl.content
     else:
-        out.write_bytes(requests.get(item["url"], timeout=60).content)
+        return fail("no b64_json or url in response")
+    out.write_bytes(png)
+    record.update(ok=True, elapsed_s=round(time.time() - t0, 1))
     _log(record)
-    return f"== {name}: OK {elapsed}s · {out.stat().st_size // 1024}KB · {out}"
+    return f"== {name}: OK {record['elapsed_s']}s · {out.stat().st_size // 1024}KB · {out}"
 
 
 def _log(record: dict) -> None:

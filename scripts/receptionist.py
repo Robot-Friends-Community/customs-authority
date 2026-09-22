@@ -98,7 +98,11 @@ def load_skills(path: str = DEFAULT_MANIFEST) -> list[dict]:
         if s.get("status", "active") != "active":
             continue
         desc = (s.get("description") or "").strip().replace("\n", " ")
-        out.append({"id": s["id"], "section": s.get("section") or "other", "description": desc})
+        # criteria text is the lever: the catalog line + the verbatim USE WHEN triggers when the census kept them
+        use_when = (s.get("use_when") or "").strip()
+        crit = f"{desc} {use_when}".strip() if use_when and use_when not in desc else desc
+        out.append({"id": s["id"], "section": s.get("section") or "other", "description": crit,
+                    "source_type": s.get("source_type", "skill_file")})
     return out
 
 

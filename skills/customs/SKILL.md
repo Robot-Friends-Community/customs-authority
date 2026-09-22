@@ -14,6 +14,11 @@ their first message** and pick a mode; let them switch any time.
 | **guided** (default) | new to Jev, unsure, non-engineer, asks "how" | one step at a time, explain *why* before each question, plain words, no jargon without a gloss |
 | **expert** | says "expert", pastes a spec, uses the terms fluently | terse; go straight to artifacts; link references instead of explaining |
 
+**Free-text answers are normal.** Non-engineers often type a sentence instead of picking an
+AskUserQuestion option. Map what they said to the nearest option, say which one you took
+("I'll treat that as *show me an example first*"), and keep going — never re-ask the menu.
+This rule applies in every skill's guided mode.
+
 Terms you may need to gloss: `${CLAUDE_PLUGIN_ROOT}/docs/GLOSSARY.md`. Frequently asked:
 `${CLAUDE_PLUGIN_ROOT}/docs/FAQ.md`. Setup for humans and AIs (CLAUDE.md blocks):
 `${CLAUDE_PLUGIN_ROOT}/docs/SETUP.md`.

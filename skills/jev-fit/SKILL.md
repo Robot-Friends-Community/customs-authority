@@ -59,6 +59,9 @@ label, Jev will match them about as well as an LLM does — the label is the cei
 
 ## Reading each target
 
+- **Monorepos / workspaces:** grep the *whole* workspace for SDK calls first (`apps/*`, `packages/*`,
+  `services/*`), list every app that has any, *then* read per app — the second app (a field app, a
+  worker, an admin) is where decision steps hide.
 - **Code (Python/TS/…):** grep for LLM SDK calls (`anthropic`, `openai`, `messages.create`,
   `generateText`, `chat.completions`), prompt strings with enumerated labels, `classify`, `route`,
   `score`, `priority`, `triage`, `sentiment`, `intent`, `is_*` booleans set from model output.

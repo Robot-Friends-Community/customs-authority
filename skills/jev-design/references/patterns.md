@@ -74,3 +74,23 @@ cheap with output tokens free. Don't rely on arithmetic identities between separ
 Pin `jev-1.13.0` where thresholds were tuned; log `response.model`, `usage.input_tokens`,
 confidence and the routed source (`jev` / `fallback`) per call. When an alias moves, re-run
 `jev-eval` on the gold set before adopting.
+
+## K. Dates, deadlines, and "how soon?" — split the calendar out of the judgment
+
+Jev is not a calendar. "Is this due within 7 days?" mixes a *judgment* (does the text state a
+deadline at all, and how firm is it?) with *arithmetic* (deadline − today). Split them:
+
+1. **Code first:** extract explicit dates with a date parser (`dateparser`, `chrono`), compute
+   `days_until = (date - today).days`, and put the *result* in the state as a field
+   (`"days_until_deadline": 5`). Never make the model count.
+2. **Jev on the words:** ask what only the text can tell you —
+   - `choice deadline_kind`: `explicit_date` / `relative_soon` ("by Friday", "ASAP", "this week") /
+     `event_bound` ("before the trade show") / `not_stated` — with criteria per option;
+   - `score urgency_tone` from the language, with concrete rungs;
+   - `noul is_firm`: "The customer states the date as a hard requirement, not a preference."
+3. **Derive in code:** if `days_until` exists, it wins; else map `relative_soon` to your policy
+   buckets; `not_stated` routes to a human question ("when do you need this?") — the honest answer
+   for a quote request with no timeline is *ask*, not *guess*.
+
+Keep the `not_stated` escape: in the first real pilot it was what stopped the model from
+inventing a timeline from a quote request. Gate on the `choice` confidence as usual.

@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "customs-authority",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Customs Authority · Department of Snap Judgments — the decision-layer toolkit for Claude Code, from Robot Friends.",
   "owner": { "name": "Robot Friends", "url": "https://github.com/Robot-Friends-Community" },
   "plugins": [
     {
       "name": "customs-authority",
       "description": "Guided concierge (/customs) + 6 skills + a shared eval harness: assess a project for Jev fit, design question sets from proven rules, label a gold set, eval it, integrate the gated Jev+LLM hybrid, and the playbook for when (not) to use it.",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "source": ".",
       "category": "dev-tools"
     }

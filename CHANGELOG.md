@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.2 — 2026-09-21 — back-half friction
+From the shadow-mode deploy on a guarded client monorepo (765 tests, 9 gates):
+- `/jev-integrate` §0b **shadow mode**: the sanctioned first deploy when labels are pending — log
+  `would_stamp` + confidence, change nothing users see, PROVISIONAL gate, mode ladder
+  `off → shadow → suggest → auto`. Checklist adds *unconfigured ⇒ silent no-op* and *unknown mode ⇒ fail closed*.
+- `templates/jev.ts` reads `TYPESAFE_*` per call (was module-load) so tests can vary env and negative
+  controls can't silently pass.
+- `/jev-label`: AskUserQuestion's 4-option cap handled (≤3 labels in-chat; >3 → terminal or 4 + free text);
+  every candidate/gold row keeps a `_ref` to its source record.
+- `patterns.md` §K: real-world phrase set ("later in the year", "eta 5/1", "budgeted next fiscal year"…)
+  and a `vague_horizon` option.
+- `jev_status.py`: prints state fields + median length for each set (catches state-shape drift).
+
 ## 0.2.1 — 2026-09-21 — first-run friction
 From the first real run (non-engineer, guided mode, a 237KB monorepo → a draft PR in one session):
 - `/jev-design`: **entering from `/jev-fit`** derives the five inputs from the report + code and asks one

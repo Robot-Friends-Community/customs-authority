@@ -55,9 +55,17 @@ python "${CLAUDE_PLUGIN_ROOT}/scripts/jev_label.py" label --in candidates.jsonl 
   why not (the model would be grading itself) and offer to sit with them instead: show each row,
   they answer, you type it.
 
-If you (the agent) are driving: run `label` with `--limit 10` batches, present each row to the
-person with AskUserQuestion (options = the labels + unclear), and pipe their answer in. Slower
-but it works inside Claude Code without a terminal hand-off.
+If you (the agent) are driving inside Claude Code: **AskUserQuestion allows at most 4 options.**
+- ≤3 labels → options = the labels + `unclear`; the person's free-text also works (map it).
+- >3 labels → either (a) hand them the terminal command (best: fast, keyboard-driven, resumable),
+  or (b) show the 4 most common labels as options and say *"anything else — type it: `ns` = not
+  stated, `u` = unclear, or the label name"*; the answer comes back as free text via "Other".
+  Say this once up front so they aren't surprised. Write rows with `append_row` semantics
+  (`_labeler` = the person, never you).
+
+**Keep a `_ref` on every candidate/gold row** pointing back to the source record (board item id,
+DB row, message ts) when rows come from a mirror or export — labels have to be reconcilable with
+the live system later, and a `_ref` is the only way to re-pull the state if the shape changes.
 
 ### 3. Measure the ceiling (when two labelers exist)
 

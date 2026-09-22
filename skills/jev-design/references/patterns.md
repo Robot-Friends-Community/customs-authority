@@ -92,5 +92,13 @@ deadline at all, and how firm is it?) with *arithmetic* (deadline − today). Sp
    buckets; `not_stated` routes to a human question ("when do you need this?") — the honest answer
    for a quote request with no timeline is *ask*, not *guess*.
 
+**Real-world phrase set** (from 116 sales-rep notes in the first pilot — put these in the criteria
+as situations, they dominate real data): "later in the year", "in the future", "eventually",
+"when we open the second location", "eta 5/1", "budgeted for next fiscal year", "this quarter",
+"just looking / comparing", "ASAP", "before the show in March". Each maps to exactly one of
+`explicit_date` / `relative_soon` / `event_bound` / `vague_horizon` / `not_stated` — add
+`vague_horizon` as its own option when "later / in the future" is common, so it doesn't get
+forced into `not_stated` or a bucket.
+
 Keep the `not_stated` escape: in the first real pilot it was what stopped the model from
 inventing a timeline from a quote request. Gate on the `choice` confidence as usual.

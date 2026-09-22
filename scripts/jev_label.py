@@ -32,6 +32,7 @@ import csv
 import json
 import random
 import sys
+import textwrap
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -75,13 +76,27 @@ def options_from_questions(qpath: Path, label: str | None) -> tuple[str, list[st
 
 # ------------------------------------------------------------------ label
 
-def show_state(state, width: int = 100) -> None:
+def show_state(state, width: int = 100, max_lines: int = 8) -> None:
+    """Render a row for the labeler: one labelled block per field, wrapped rather than cut.
+
+    A state field is often the whole decision (a long message, the turns around it). Truncating it
+    mid-sentence hides the part that settles the label, so wrap to `width` and only elide past
+    `max_lines` — which still keeps one oversized field from flooding the screen.
+    """
+    def block(k: str, v) -> None:
+        body = " ".join(str(v).split())
+        lines = textwrap.wrap(body, width=width) or [""]
+        clipped = len(lines) > max_lines
+        for i, ln in enumerate(lines[:max_lines]):
+            print(f"  {k if i == 0 else '':<12} {ln}")
+        if clipped:
+            print(f"  {'':<12} … (+{len(lines) - max_lines} more lines)")
+
     if isinstance(state, dict):
         for k, v in state.items():
-            s = str(v).replace("\n", " ")
-            print(f"  {k:<12} {s[:width * 3]}")
+            block(k, v)
     else:
-        print("  " + str(state)[:width * 4])
+        block("state", state)
 
 
 def cmd_label(a: argparse.Namespace) -> None:

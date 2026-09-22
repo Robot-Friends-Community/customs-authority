@@ -28,7 +28,7 @@ with a confidence number your code can act on.
 | Input | text only (string / JSON / array); English best, other languages handled but test |
 | Endpoint | `POST https://api.typesafe.ai/v1/systemone`, `Authorization: Bearer $TYPESAFE_API_KEY` |
 | Models | `jev-1.13.0`; aliases `jev-latest`, `jev-preview` (pin the version once thresholds are tuned) |
-| Also via | OpenRouter `typesafe/jev-1.13` at `POST /api/alpha/decisions` (same body) |
+| Also via | OpenRouter `typesafe/jev-1.13` at `POST /api/alpha/decisions` (same body); reported also on Vercel AI Gateway and Cloudflare Workers AI (per launch coverage 2026-09 — verify the model id and body shape on each before pinning) |
 | Data | not trained on customer data; ZDR for enterprise; no fine-tuning — you shape it through state + criteria |
 | Key | https://console.typesafe.ai/keys (Google sign-in; org-scoped keys; playground included) |
 

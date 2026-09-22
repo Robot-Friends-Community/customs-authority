@@ -1,6 +1,6 @@
 {
   "name": "customs-authority",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Customs Authority · Department of Snap Judgments — the decision-layer toolkit for Claude Code. Find where TypeSafe's Jev (System One) fits in a project, design question sets that actually work, prove them on a gold set, and ship the gated Jev-plus-LLM hybrid: the sure answers are stamped through, the unsure go to Secondary Inspection.",
   "author": { "name": "Robot Friends", "url": "https://github.com/Robot-Friends-Community" },
   "repository": "https://github.com/Robot-Friends-Community/customs-authority",

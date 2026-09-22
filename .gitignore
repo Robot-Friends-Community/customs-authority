@@ -4,3 +4,4 @@ __pycache__/
 .env
 runs/*.jsonl
 assets/_refs/
+assets/gpt-image-2-manifest.json
